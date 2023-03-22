@@ -1,0 +1,22 @@
+import assert from 'node:assert';
+import { describe, it } from 'node:test';
+import * as Parser from './parser.cjs';
+const wrap = (text) => (fn) => (text2, ...args) => fn(text + text2, ...args)
+const given = wrap('Given ')(describe), then = wrap('Then ')(it);
+given("a test suite", () => {
+    then('assertions don\'t fail', () => assert.strictEqual(1, 1))
+})
+
+given("a parser", () => {
+    then('it provides a parse function',
+         () => assert.strictEqual(typeof Parser.parse, 'function'))
+    then('it can parse a log command without text',
+         () => assert.deepEqual(Parser.parse('log'),
+                                { command: "log", args: undefined }))
+    then('it can parse a log command with text',
+         () => assert.deepEqual(Parser.parse('log "hello"'),
+                                { command: "log", args: { type: "StringLiteral", value: 'hello' } }))
+    then('it can parse an on-click feature',
+         () => assert.deepEqual(Parser.parse('on click\nlog "hello"\nlog'),
+                                { type: "Feature", event: "click", body: [{ command: "log", args: { type: "StringLiteral", value: 'hello' } }, { command: "log", args: undefined }] }))
+})

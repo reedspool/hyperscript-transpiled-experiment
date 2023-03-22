@@ -1,0 +1,19 @@
+{
+  "type":"module",
+  "name": "hyperscript-from-scratch-transpiled",
+  "version": "1.0.0",
+  "description": "Rewriting hyperscript (hyperscript.org) from scratch and seeing if I can do it transpiled. This is mostly to learn about language design, not with any near hope of surpassing what hyperscript does.",
+  "main": "index.js",
+  "scripts": {
+    "generate_parser": "peggy -o parser.cjs grammar.pegjs",
+    "test_parser": "node --test parser.test.js",
+    "test_transpiler": "node --test transpiler.test.js",
+    "test": "npm run generate_parser && npm run test_parser && npm run test_transpiler"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "peggy": "^3.0.2"
+  }
+}

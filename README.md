@@ -18,4 +18,26 @@ flowchart LR
     peggy-->parser
 ```
 
-That's it at this point.
+Then it runs a [Node test](https://nodejs.org/docs/latest-v18.x/api/test.html#test-runner) which imports and uses that freshly minted parser JavaScript file. 
+
+```mermaid
+%%{init: {'theme':'forest'}}%%
+flowchart LR
+    parser[\parser.js\]
+    test{{node parser.test.js}}
+    report[\parser test pass/fail report\]
+    parser-->test
+    test-->report
+```
+
+And if all of those tests succeed, then it runs more Node tests for the transpiler.
+
+```mermaid
+%%{init: {'theme':'forest'}}%%
+flowchart LR
+    parserReport[\parser test pass/fail report\]
+    test{{node transpiler.test.js}}
+    transpilerReport[\transpiler test pass/fail report\]
+    parserReport-->test
+    test-->transpilerReport
+```
