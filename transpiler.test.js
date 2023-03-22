@@ -9,4 +9,10 @@ given("a test suite", () => {
 })
 given("a transpiler", () => {
     then("it provides a transpile function", () => assert.strictEqual(typeof transpile, "function"))
+    then("it transpiles a log command with no text",
+         () => assert.strictEqual(transpile(Parser.parse('log')), "function (target){ console.log() }"))
+    then("it transpiles a log command with text",
+         () => assert.strictEqual(transpile(Parser.parse('log "hello"')), 'function (target){ console.log("hello") }'))
+    then("it transpiles an on-click feature",
+         () => assert.strictEqual(transpile(Parser.parse('on click\nlog "hello"')), 'function (target){ target.addEventListener(\'click\', () => { console.log("hello") }) }'))
 })

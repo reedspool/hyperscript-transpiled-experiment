@@ -13,7 +13,7 @@ featureBody
   = command|1.., commandDelimeter|
 
 command = command:"log" args:( whitespace _ StringLiteral )?
-  { return { command, args: args && args[2] } }
+  { return { type: "Command", command, args: args && [args[2]] } }
 
 commandDelimeter
 = _ ";" _

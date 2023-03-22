@@ -200,7 +200,7 @@ function peg$parse(input, options) {
 
   var peg$f0 = function(descriptor, body) { return { type: 'Feature', event: descriptor.event, body } };
   var peg$f1 = function(event) { return { event } };
-  var peg$f2 = function(command, args) { return { command, args: args && args[2] } };
+  var peg$f2 = function(command, args) { return { type: "Command", command, args: args && [args[2]] } };
   var peg$f3 = function(chars) {
       return { type: "StringLiteral", value: chars.join("") };
     };

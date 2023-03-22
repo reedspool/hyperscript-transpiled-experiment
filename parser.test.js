@@ -12,11 +12,11 @@ given("a parser", () => {
          () => assert.strictEqual(typeof Parser.parse, 'function'))
     then('it can parse a log command without text',
          () => assert.deepEqual(Parser.parse('log'),
-                                { command: "log", args: undefined }))
+                                { type: "Command", command: "log", args: null }))
     then('it can parse a log command with text',
          () => assert.deepEqual(Parser.parse('log "hello"'),
-                                { command: "log", args: { type: "StringLiteral", value: 'hello' } }))
+                                { type: "Command", command: "log", args: [{ type: "StringLiteral", value: 'hello' }] }))
     then('it can parse an on-click feature',
          () => assert.deepEqual(Parser.parse('on click\nlog "hello"\nlog'),
-                                { type: "Feature", event: "click", body: [{ command: "log", args: { type: "StringLiteral", value: 'hello' } }, { command: "log", args: undefined }] }))
+                                { type: "Feature", event: "click", body: [{ type: "Command", command: "log", args: [{ type: "StringLiteral", value: 'hello' }] }, { type: "Command", command: "log", args: null }] }))
 })
