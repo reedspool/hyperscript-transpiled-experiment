@@ -1,0 +1,43 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Hyperscript Transpiled experiment</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <script type="text/javascript">
+         window.module =  {};
+        </script>
+        <script type="module" src="./parser.js">
+        </script>
+        <script type="module">
+         import { run } from "./runtime.js"
+         import { transpile } from "./transpiler.js";
+         const Parser = module.exports;
+         window.exec = (source, target) => run(transpile(Parser.parse(source)), target)
+
+         const targets = document.querySelectorAll('[_]')
+         Array.prototype.forEach.call(targets, (target) => {
+             exec(target.getAttribute('_'), target)
+         })
+        </script>
+
+    </head>
+    <body>
+        <p>Experimenting with a Hyperscript-like language transpiled</p>
+
+        <p>Status: <span id="js-status">Loading...</span>
+
+        <script type="module">
+           exec('log "hello world"') // if this doesn't throw...
+           document.querySelector("#js-status").innerHTML = "Running."
+        </script>
+
+        <p>Now to test applying code to a button on-click.</p>
+
+        <div><button _='on click log "you clicked me!"'>Click to log</button></div>
+    </body>
+</html>

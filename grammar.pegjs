@@ -4,7 +4,7 @@ toplevel =
 empty = _ { return { type: "EmptyProgram" }  }
 
 feature =
-        descriptor:featureDescriptor NL body:featureBody
+        descriptor:featureDescriptor _ NL* _ body:featureBody
         { return { type: 'Feature', event: descriptor.event, body } }
 
 featureDescriptor =

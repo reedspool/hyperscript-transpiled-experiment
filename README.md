@@ -2,11 +2,21 @@
 
 Rewriting hyperscript (hyperscript.org) from scratch and seeing if I can do it transpiled. This is mostly to learn about language design, not with any near hope of surpassing what hyperscript does.
 
-# Program Flow
+## HTML
+
+The HTML page demos what is currently working.
+
+To see the HTML page in action, you'll need to serve it. An easy way to do this is
+
+```sh
+npx live-server
+```
+
+## Test
 
 When you run `npm run test` right now, what will happen is this:
 
-[PeggyJS](https://peggyjs.org/documentation.html) takes the [PEG](https://en.wikipedia.org/wiki/Parsing_expression_grammar) language grammar file and outputs a JavaScript parser in a new file.
+[PeggyJS](https://peggyjs.org/documentation.html) takes the [PEG](https://en.wikipedia.org/wiki/Parsing_expression_grammar) language grammar file and outputs a JavaScript parser in a new file. It then duplicates this parser file with a different name to satisfy both HTML and Node naming requirements.
 
 ```mermaid
 %%{init: {'theme':'forest'}}%%
@@ -14,8 +24,10 @@ flowchart LR
     grammar[\grammar.pegjs\]
     peggy{{peggy}}
     parser[\parser.js\]
+    parserC[\parser.cjs\]
     grammar-->peggy
     peggy-->parser
+    peggy-->parserC
 ```
 
 Then it runs a [Node test](https://nodejs.org/docs/latest-v18.x/api/test.html#test-runner) which imports and uses that freshly minted parser JavaScript file. 
@@ -49,4 +61,15 @@ level to only run that test in watch-mode. E.g.
 node --watch --test transpiler.test.js
 ```
 
+Then yet more Node tests for the runtime.
+
+```mermaid
+%%{init: {'theme':'forest'}}%%
+flowchart LR
+    transpilerReport[\transpiler test pass/fail report\]
+    test{{node runtime.test.js}}
+    runtimeReport[\runtime test pass/fail report\]
+    transpilerReport-->test
+    test-->runtimeReport
+```
 
