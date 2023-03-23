@@ -18,7 +18,7 @@ given("a transpiler", () => {
         () => strictEqual(typeof transpile, "function"))
     then(
         "it transpiles an empty program",
-        tMatches('', /\(target\)\s*=>\s*{\s*}/))
+        tMatches('', /\(target\)\s*=>\s*{\s*return\s*}/))
     then(
         "it transpiles a log command with no text",
         tMatches('log', /console\.log\(\)/))
@@ -29,5 +29,8 @@ given("a transpiler", () => {
         const program = t('on click\nlog "hello"');
         then("it adds an event", () => match(program, /target\.addEventListener/))
         then("it includes a log", () => match(program, /console\.log\("hello"\)/))
+    })
+    when("it transpiles a self reference", () => {
+        then("it reflects the target", () => match(t('me'), /return target/))
     })
 })

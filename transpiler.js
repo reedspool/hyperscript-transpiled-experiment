@@ -1,6 +1,6 @@
 export const transpile = (tree) =>
     {
-        return `(target) => { ${transpileContents(tree)} }`;
+        return `(target) => { return ${transpileContents(tree)} }`;
     }
 
 export const transpileContents = (tree) =>
@@ -17,5 +17,6 @@ export const typesToTranspileFns = {
     "Command": (tree) => typesToTranspileFns[`Command-${tree.command}`](tree),
     "Command-log": ({ args }) => `console.log(${args ? args.map(transpileContents).join(", ") : ""})`,
     "CommandList": (array) => array.map(typesToTranspileFns[`Command`]).join(';'),
+    "SelfReferenceExpression": ({  }) => `target`,
     "StringLiteral": ({ value }) => `"${value}"`
 }

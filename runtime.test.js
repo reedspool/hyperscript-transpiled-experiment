@@ -23,6 +23,11 @@ given("a runtime", () => {
 
         restore();
     })
+    when('it runs a self reference expression', () => {
+        const target = {};
+        const output = run(t('me'), target)
+        then("it returns target", () => strictEqual(output, target));
+    })
     when('it runs a log command with some text', () => {
         const consoleLog = fake();
         replace(console, "log", consoleLog)

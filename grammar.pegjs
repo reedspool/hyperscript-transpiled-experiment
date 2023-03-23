@@ -1,5 +1,5 @@
 toplevel =
-  feature / command / empty
+  feature / command / expression / empty
 
 empty = _ { return { type: "EmptyProgram" }  }
 
@@ -16,6 +16,11 @@ featureBody
 
 command = command:"log" args:( whitespace _ StringLiteral )?
   { return { type: "Command", command, args: args && [args[2]] } }
+
+expression =
+           selfReferenceExpression
+
+selfReferenceExpression = "me" { return { type: "SelfReferenceExpression" } }
 
 commandDelimeter
 = _ ";" _
