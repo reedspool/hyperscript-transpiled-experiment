@@ -1,5 +1,5 @@
 {
-  "type":"module",
+  "type": "module",
   "name": "hyperscript-from-scratch-transpiled",
   "version": "1.0.0",
   "description": "Rewriting hyperscript (hyperscript.org) from scratch and seeing if I can do it transpiled. This is mostly to learn about language design, not with any near hope of surpassing what hyperscript does.",
@@ -15,5 +15,8 @@
   "license": "ISC",
   "dependencies": {
     "peggy": "^3.0.2"
+  },
+  "devDependencies": {
+    "sinon": "^15.0.2"
   }
 }

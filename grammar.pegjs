@@ -1,5 +1,7 @@
 toplevel =
-  command / feature
+  feature / command / empty
+
+empty = _ { return { type: "EmptyProgram" }  }
 
 feature =
         descriptor:featureDescriptor NL body:featureBody

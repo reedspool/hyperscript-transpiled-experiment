@@ -41,3 +41,12 @@ flowchart LR
     parserReport-->test
     test-->transpilerReport
 ```
+
+Note: It's much faster if you're working on a specific 
+level to only run that test in watch-mode. E.g.
+
+```sh
+node --watch --test transpiler.test.js
+```
+
+
