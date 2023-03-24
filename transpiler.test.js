@@ -34,6 +34,13 @@ given("a transpiler", () => {
         then("it calls the runtime function", () => match(program, /____.next\(/))
         then("it passes the selector", () => match(program, /\.clazz/))
         });
+    when("it transpiles setting an untargeted style attr expression to a string", () => {
+        const program = t('set *backgroundColor to "blue"');
+        then("it accesses the style ", () => match(program, /\.style\.backgroundColor/))
+        then("it uses the default target", () => match(program, /target\./))
+        then("it sets", () => match(program, /=/))
+        then("it provides the value", () => match(program, /blue/))
+        });
     then(
         "it transpiles a log command with no text",
         tMatches('log', /console\.log\(\)/))

@@ -16,6 +16,7 @@ export const typesToTranspileFns = {
     "EmptyProgram" : () => '',
     "Feature": (tree) => `target.addEventListener('${tree.event}', () => { ${typesToTranspileFns["CommandList"](tree.body)} })`,
     "StyleAttrExpression": ({ attr, target }) => `${target ? transpileContents(target) : 'target'}.style.${attr}`,
+    "SetExpression": ({ attr, target, value }) => `${transpileContents(target)} = ${transpileContents(value)}`,
     "NextExpression": ({ selector }) => `____.next(target, document.body, ${transpileContents(selector)}, false)`,
     "LogExpression": ({ args }) => `console.log(${args.length > 0 ? args.map(transpileContents).join(", ") : ""})`,
     "CommandList": (array) => array.map(transpileContents).join(';'),
