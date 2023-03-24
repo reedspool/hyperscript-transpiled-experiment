@@ -1,5 +1,5 @@
 toplevel =
-  feature / command / expression / empty
+  feature / expression / empty
 
 empty = _ { return { type: "EmptyProgram" }  }
 
@@ -12,16 +12,30 @@ featureDescriptor =
         { return { event } }
 
 featureBody
-  = command|1.., commandDelimeter|
+  = expression|1.., commandDelimeter|
 
-command = command:"log" args:( whitespace _ StringLiteral )?
-  { return { type: "Command", command, args: args && [args[2]] } }
+logExpression = "log" _ arg:expression?
+  { return { type: "LogExpression", args: arg ? [arg] : [] } }
 
-expression =
-           selfReferenceExpression
+expression = selfReferenceExpression / logExpression / functionCallExpression / identifierExpression / stringExpression / numberExpression
+
+numberExpression = [0-9]+ ("." [0-9]+)? { return { type: "NumberExpression", value: text() } }
 
 selfReferenceExpression =
            ("me" / "I") { return { type: "SelfReferenceExpression" } }
+
+functionCallExpression =
+           "call" whitespace _ name:jsIdentifier _ "(" _ args:argList _ ")"
+           { return { type: "FunctionCallExpression", name, args }}
+
+identifierExpression = jsIdentifier { return { type: "IdentifierExpression", value: text() } }
+
+jsIdentifier = (identifierStart identifierPart*) { return text() }
+identifierStart = [a-zA-Z_$]
+identifierPart = identifierStart / [0-9]
+
+argList
+= expression|.., _ "," _|
 
 commandDelimeter
 = _ ";" _
@@ -39,9 +53,9 @@ whitespace = [ \t]
 // BEGIN Stolen from PEG.js JavaScript grammar example
 // https://github.com/pegjs/pegjs/blob/master/examples/javascript.pegjs
 
-StringLiteral
+stringExpression
   = '"' chars:DoubleStringCharacter* '"' {
-      return { type: "StringLiteral", value: chars.join("") };
+      return { type: "StringExpression", value: chars.join("") };
     }
 //     / "'" chars:SingleStringCharacter* "'" {
 //       return { type: "Literal", value: chars.join("") };

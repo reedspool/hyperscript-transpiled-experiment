@@ -39,16 +39,12 @@ given("a runtime", () => {
         then("it calls console.log with string", () => ok(consoleLog.calledWithExactly("hello")));
         restore();
     })
-    when('it runs an on-click feature', () => {
+    when('it runs a function call expression', () => {
         const consoleLog = fake();
-        replace(console, "log", consoleLog);
-        const addEventListener = fake();
-        const target = { addEventListener };
-        const output = run(t('on click\nlog "hello"'), target)
+        global.consoleLog = consoleLog;
+        const output = run(t('call consoleLog("hello")'))
         then("it returns undefined", () => strictEqual(output, undefined));
-        then("it calls addEventListener", () => strictEqual(addEventListener.callCount, 1));
-        then("it calls addEventListener on target", () => ok(addEventListener.calledOn(target)));
-        then("it doesn't call console.log", () => strictEqual(consoleLog.callCount, 0));
+        then("it calls the given function", () => strictEqual(consoleLog.callCount, 1));
         restore();
     })
     when('it runs an on-click feature', () => {

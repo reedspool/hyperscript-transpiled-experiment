@@ -34,4 +34,9 @@ given("a transpiler", () => {
         then("`me` reflects the target", () => match(t('me'), /return target/))
         then("`I` reflects the target", () => match(t('I'), /return target/))
     })
+    when("it transpiles a function call expression", () => {
+        then("the function name is present", () => match(t('call myFunc()'), /myFunc/))
+        then("the function is called", () => match(t('call myFunc()'), /myFunc\s*\(\s*\)/))
+        then("the function is called with arguments", () => match(t('call myFunc(a, b, c)'), /myFunc\s*\(\s*a\s*,\s*b\s*,\s*c\s*\)/))
+    })
 })
