@@ -5,6 +5,7 @@ export const transpile = (tree) =>
 
 export const transpileContents = (tree) =>
     {
+        if (! tree) throw new Error("No tree passed to transpile")
         if (! typesToTranspileFns[tree.type]) throw new Error(`No transpile fn for type '${tree.type}'`)
         return typesToTranspileFns[tree.type](tree);
     }
@@ -14,6 +15,7 @@ export const transpileContents = (tree) =>
 export const typesToTranspileFns = {
     "EmptyProgram" : () => '',
     "Feature": (tree) => `target.addEventListener('${tree.event}', () => { ${typesToTranspileFns["CommandList"](tree.body)} })`,
+    "StyleAttrExpression": ({ attr, target }) => `${target ? transpileContents(target) : 'target'}.style.${attr}`,
     "NextExpression": ({ selector }) => `____.next(target, document.body, ${transpileContents(selector)}, false)`,
     "LogExpression": ({ args }) => `console.log(${args.length > 0 ? args.map(transpileContents).join(", ") : ""})`,
     "CommandList": (array) => array.map(transpileContents).join(';'),

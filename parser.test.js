@@ -19,6 +19,12 @@ given("a parser", () => {
     then('it can parse a self reference `I`',
          () => assert.deepEqual(Parser.parse('I'),
                                 { type: "SelfReferenceExpression" }))
+    then('it can parse an untargeted style attr expression',
+         () => assert.deepEqual(Parser.parse('*color'),
+                                { type: "StyleAttrExpression", attr: 'color', target: null }))
+    then('it can parse a targeted style attr expression',
+         () => assert.deepEqual(Parser.parse('*color of abcd'),
+                                { type: "StyleAttrExpression", attr: 'color', target: { type: "IdentifierExpression", value: "abcd" } }))
     then('it can parse an integer',
          () => assert.deepEqual(Parser.parse('12345'),
                                 { type: "NumberExpression", value: '12345' }))

@@ -30,6 +30,19 @@ given("a runtime", () => {
         output = run(t('I'), target)
         then("`I` returns target", () => strictEqual(output, target));
     })
+    when('it runs an untargeted style attr expression', () => {
+        const target = { style: { backgroundColor : "tomato" } };
+        const output = run(t('*backgroundColor'), target)
+        then("it returns a JS value", () => strictEqual(output, "tomato"));
+    })
+    when('it runs a targeted style attr expression', () => {
+        const next = { style: { fontSize : 3.14 } }
+        global.____ = { next: () => next }
+        global.document = { body: {} };
+        const target = {};
+        const output = run(t('*fontSize of next ".clazz"'), target)
+        then("it returns a JS value", () => strictEqual(output, 3.14));
+    })
     when('it runs a next expression', () => {
         global.____ = { next: fake() }
         global.document = { body: {} };

@@ -19,6 +19,16 @@ given("a transpiler", () => {
     then(
         "it transpiles an empty program",
         tMatches('', /\(target\)\s*=>\s*{\s*return\s*}/))
+    when("it transpiles an untargeted style attr expression", () => {
+        const program = t('*backgroundColor');
+        then("it attempts to access the style", () => match(program, /backgroundColor/))
+        then("it uses the default target", () => match(program, /target\./))
+        });
+    when("it transpiles a targeted style attr expression", () => {
+        const program = t('*backgroundColor of anotherTarget');
+        then("it accesses the style ", () => match(program, /\.style\.backgroundColor/))
+        then("it uses the given target", () => match(program, /anotherTarget/))
+        });
     when("it transpiles a next expression", () => {
         const program = t('next ".clazz"');
         then("it calls the runtime function", () => match(program, /____.next\(/))

@@ -16,6 +16,7 @@ featureBody
 
 expression =
            selfReferenceExpression /
+           styleAttrExpression /
            functionCallExpression /
            nextExpression /
            logExpression /
@@ -30,6 +31,9 @@ logExpression = "log" arg:(whitespace _ expression)?
 
 nextExpression = "next" whitespace _ selector:stringExpression
                { return { type: "NextExpression", selector } }
+
+styleAttrExpression = "*" attr:jsIdentifier target:(whitespace _ "of" whitespace _ expression)?
+               { return { type: "StyleAttrExpression", attr, target: target && target[5] } }
 
 numberExpression = [0-9]+ ("." [0-9]+)? { return { type: "NumberExpression", value: text() } }
 
