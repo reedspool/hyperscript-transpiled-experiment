@@ -19,6 +19,12 @@ given("a transpiler", () => {
     then(
         "it transpiles an empty program",
         tMatches('', /\(target\)\s*=>\s*{\s*return\s*}/))
+    when("it transpiles a integer expression", tMatches('3', /3/));
+    when("it transpiles a float number expression", tMatches('3.14', /3\.14/));
+    when("it transpiles a integer seconds expression to milliseconds", tMatches('3s', /\(\s*3\s*\*\s*1000\)/));
+    when("it transpiles a float seconds expression to milliseconds", tMatches('3.14s', /\(\s*3.14\s*\*\s*1000\)/));
+    when("it transpiles a integer milliseconds expression", tMatches('5ms', /5/));
+    when("it transpiles a float milliseconds expression", tMatches('5.44ms', /5.44/));
     when("it transpiles an untargeted style attr expression", () => {
         const program = t('*backgroundColor');
         then("it attempts to access the style", () => match(program, /backgroundColor/))

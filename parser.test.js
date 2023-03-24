@@ -37,6 +37,12 @@ given("a parser", () => {
     then('it can parse a float',
          () => assert.deepEqual(Parser.parse('12345.0001'),
                                 { type: "NumberExpression", value: '12345.0001' }))
+    then('it can parse a seconds duration expression',
+         () => assert.deepEqual(Parser.parse('1s'),
+                                { type: "SecondsDurationExpression", value: { type: "NumberExpression", value: '1' }}))
+    then('it can parse a milliseconds duration expression',
+         () => assert.deepEqual(Parser.parse('1000ms'),
+                                { type: "MillisecondsDurationExpression", value: { type: "NumberExpression", value: '1000' }}))
     then('it can parse a log command with text',
          () => assert.deepEqual(Parser.parse('log "hello"'),
                                 { type: "LogExpression", args: [{ type: "StringExpression", value: 'hello' }] }))

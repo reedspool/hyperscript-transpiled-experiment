@@ -25,6 +25,9 @@ expression =
            // must come before identifier expression
            identifierExpression /
            stringExpression /
+           // Anything with a number first must come before numbers
+           secondsDurationExpression /
+           millisecondsDurationExpression /
            numberExpression
 
 logExpression = "log" arg:(whitespace _ expression)?
@@ -39,6 +42,8 @@ setExpression = "set" whitespace _ target:styleAttrExpression whitespace _ "to" 
 styleAttrExpression = "*" attr:jsIdentifier target:(whitespace _ "of" whitespace _ expression)?
                { return { type: "StyleAttrExpression", attr, target: target && target[5] } }
 
+millisecondsDurationExpression = value:numberExpression _ "ms" { return { type: "MillisecondsDurationExpression", value } }
+secondsDurationExpression = value:numberExpression _ "s" { return { type: "SecondsDurationExpression", value } }
 numberExpression = [0-9]+ ("." [0-9]+)? { return { type: "NumberExpression", value: text() } }
 
 selfReferenceExpression =

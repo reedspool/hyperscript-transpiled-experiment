@@ -13,6 +13,16 @@ const t = (program) => transpile(Parser.parse(program))
 
 given("a runtime", () => {
     then('it runs an empty program', () => run(t('')))
+    when('it runs a number expression', () => {
+        then("it returns a JS value for an integer", () => strictEqual(run(t('3')), 3));
+        then("it returns a JS value for a float", () => strictEqual(run(t('3.14')), 3.14));
+    })
+    when('it runs a duration expression', () => {
+        then("it returns an integer second value * 1000", () => strictEqual(run(t('3s')), 3000));
+        then("it returns an float second value * 1000", () => strictEqual(run(t('3.14s')), 3140));
+        then("it returns an integer millisecond value", () => strictEqual(run(t('3ms')), 3));
+        then("it returns an float millisecond value", () => strictEqual(run(t('3.14ms')), 3.14));
+    })
     when('it runs an empty log command', () => {
         const consoleLog = fake();
         replace(console, "log", consoleLog)
