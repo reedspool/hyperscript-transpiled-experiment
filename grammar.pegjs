@@ -14,10 +14,22 @@ featureDescriptor =
 featureBody
   = expression|1.., commandDelimeter|
 
-logExpression = "log" _ arg:expression?
-  { return { type: "LogExpression", args: arg ? [arg] : [] } }
+expression =
+           selfReferenceExpression /
+           functionCallExpression /
+           nextExpression /
+           logExpression /
+           // All the things that start with identifiers ("call", "next", "log")
+           // must come before identifier expression
+           identifierExpression /
+           stringExpression /
+           numberExpression
 
-expression = selfReferenceExpression / logExpression / functionCallExpression / identifierExpression / stringExpression / numberExpression
+logExpression = "log" arg:(whitespace _ expression)?
+                { return { type: "LogExpression", args: arg ? [arg[2]] : [] } }
+
+nextExpression = "next" whitespace _ selector:stringExpression
+               { return { type: "NextExpression", selector } }
 
 numberExpression = [0-9]+ ("." [0-9]+)? { return { type: "NumberExpression", value: text() } }
 

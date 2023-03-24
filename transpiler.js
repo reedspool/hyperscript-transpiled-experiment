@@ -14,6 +14,7 @@ export const transpileContents = (tree) =>
 export const typesToTranspileFns = {
     "EmptyProgram" : () => '',
     "Feature": (tree) => `target.addEventListener('${tree.event}', () => { ${typesToTranspileFns["CommandList"](tree.body)} })`,
+    "NextExpression": ({ selector }) => `____.next(target, document.body, ${transpileContents(selector)}, false)`,
     "LogExpression": ({ args }) => `console.log(${args.length > 0 ? args.map(transpileContents).join(", ") : ""})`,
     "CommandList": (array) => array.map(transpileContents).join(';'),
     "SelfReferenceExpression": ({  }) => `target`,

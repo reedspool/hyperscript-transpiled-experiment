@@ -19,6 +19,11 @@ given("a transpiler", () => {
     then(
         "it transpiles an empty program",
         tMatches('', /\(target\)\s*=>\s*{\s*return\s*}/))
+    when("it transpiles a next expression", () => {
+        const program = t('next ".clazz"');
+        then("it calls the runtime function", () => match(program, /____.next\(/))
+        then("it passes the selector", () => match(program, /\.clazz/))
+        });
     then(
         "it transpiles a log command with no text",
         tMatches('log', /console\.log\(\)/))

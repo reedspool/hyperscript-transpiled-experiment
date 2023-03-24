@@ -46,6 +46,9 @@ given("a parser", () => {
     then('it can parse a multi-letter identifier expression ',
          () => assert.deepEqual(Parser.parse('x$_abl'),
                                 { type: "IdentifierExpression", value: "x$_abl" }))
+    then('it can parse a next expression',
+         () => assert.deepEqual(Parser.parse('next ".clazz"'),
+                                { type: "NextExpression", selector: { type: "StringExpression", value: ".clazz" }}))
     then('it can parse a function call expression with no arguments',
          () => assert.deepEqual(Parser.parse('call myFunc()'),
                                 { type: "FunctionCallExpression", name: "myFunc", args: [] }))

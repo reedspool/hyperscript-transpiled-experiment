@@ -1,4 +1,4 @@
-import { match, strictEqual, ok } from 'node:assert';
+import { match, strictEqual, ok, deepEqual } from 'node:assert';
 import { describe, it } from 'node:test';
 import sinon, { fake, replace, restore } from "sinon"
 import * as Parser from './parser.cjs';
@@ -29,6 +29,16 @@ given("a runtime", () => {
         then("`me` returns target", () => strictEqual(output, target));
         output = run(t('I'), target)
         then("`I` returns target", () => strictEqual(output, target));
+    })
+    when('it runs a next expression', () => {
+        global.____ = { next: fake() }
+        global.document = { body: {} };
+        const target = {};
+        const output = run(t('next ".clazz"'), target)
+        then("it returns an HTML element", () => strictEqual(output, undefined));
+        then("it calls global next function", () => strictEqual(____.next.callCount, 1));
+        then("it calls global next function correctly", () => deepEqual(____.next.firstCall.args, [target, document.body, ".clazz", false]));
+        restore();
     })
     when('it runs a log command with some text', () => {
         const consoleLog = fake();

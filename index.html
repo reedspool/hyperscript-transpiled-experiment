@@ -14,9 +14,10 @@
         <script type="module" src="./parser.js">
         </script>
         <script type="module">
-         import { run } from "./runtime.js"
+         import { run, install } from "./runtime.js"
          import { transpile } from "./transpiler.js";
          const Parser = module.exports;
+         install(window)
          window.exec = (source, target) => run(transpile(Parser.parse(source)), target)
 
          const targets = document.querySelectorAll('[_]')
@@ -60,10 +61,21 @@
         <script type="module">
             window.turnNextRed = (self) => {
                 const elt = scanForwardQuery(self, document.body, "[target]", false)
-                elt.style.color = 'red';
+                window.turnRed(elt)
             }
         </script>
         <div><button _='on click call turnNextRed(me)'>Click to turn the next thing red</button></div>
+
+        <div target>I'll turn red</div>
+
+        <p>How about the same thing, but more hyperscript?</p>
+
+        <script type="module">
+            window.turnRed = (elt) => {
+                elt.style.color = 'red';
+            }
+        </script>
+        <div><button _='on click call turnRed(next "[target]")'>Click to turn the next thing red</button></div>
 
         <div target>I'll turn red</div>
     </body>
