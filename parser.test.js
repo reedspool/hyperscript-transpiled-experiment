@@ -13,8 +13,11 @@ given("a parser", () => {
     then('it can parse a log command without text',
          () => assert.deepEqual(Parser.parse('log'),
                                 { type: "Command", command: "log", args: null }))
-    then('it can parse a self reference',
+    then('it can parse a self reference `me`',
          () => assert.deepEqual(Parser.parse('me'),
+                                { type: "SelfReferenceExpression" }))
+    then('it can parse a self reference `I`',
+         () => assert.deepEqual(Parser.parse('I'),
                                 { type: "SelfReferenceExpression" }))
     then('it can parse a log command with text',
          () => assert.deepEqual(Parser.parse('log "hello"'),

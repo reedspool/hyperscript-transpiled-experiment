@@ -20,7 +20,8 @@ command = command:"log" args:( whitespace _ StringLiteral )?
 expression =
            selfReferenceExpression
 
-selfReferenceExpression = "me" { return { type: "SelfReferenceExpression" } }
+selfReferenceExpression =
+           ("me" / "I") { return { type: "SelfReferenceExpression" } }
 
 commandDelimeter
 = _ ";" _

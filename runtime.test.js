@@ -25,8 +25,10 @@ given("a runtime", () => {
     })
     when('it runs a self reference expression', () => {
         const target = {};
-        const output = run(t('me'), target)
-        then("it returns target", () => strictEqual(output, target));
+        let output = run(t('me'), target)
+        then("`me` returns target", () => strictEqual(output, target));
+        output = run(t('I'), target)
+        then("`I` returns target", () => strictEqual(output, target));
     })
     when('it runs a log command with some text', () => {
         const consoleLog = fake();

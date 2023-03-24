@@ -31,6 +31,7 @@ given("a transpiler", () => {
         then("it includes a log", () => match(program, /console\.log\("hello"\)/))
     })
     when("it transpiles a self reference", () => {
-        then("it reflects the target", () => match(t('me'), /return target/))
+        then("`me` reflects the target", () => match(t('me'), /return target/))
+        then("`I` reflects the target", () => match(t('I'), /return target/))
     })
 })
