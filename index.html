@@ -25,6 +25,21 @@
          })
         </script>
 
+        <script type="text/javascript">
+         // Stolen from _hyperscript
+         window.scanForwardQuery = function(start, root, match, wrap) {
+             var results = root.querySelectorAll(match);
+             for (var i = 0; i < results.length; i++) {
+                 var elt = results[i];
+                 if (elt.compareDocumentPosition(start) === Node.DOCUMENT_POSITION_PRECEDING) {
+                     return elt;
+                 }
+             }
+             if (wrap) {
+                 return results[0];
+             }
+         }
+        </script>
     </head>
     <body>
         <p>Experimenting with a Hyperscript-like language transpiled</p>
@@ -39,5 +54,17 @@
         <p>Now to test applying code to a button on-click.</p>
 
         <div><button _='on click log "you clicked me!"'>Click to log</button></div>
+
+        <p>Can we do something with our click? How about calling a JS globally defined function?</p>
+
+        <script type="module">
+            window.turnNextRed = (self) => {
+                const elt = scanForwardQuery(self, document.body, "[target]", false)
+                elt.style.color = 'red';
+            }
+        </script>
+        <div><button _='on click call turnNextRed(me)'>Click to turn the next thing red</button></div>
+
+        <div target>I'll turn red</div>
     </body>
 </html>
