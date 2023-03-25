@@ -1,5 +1,5 @@
 toplevel =
-  feature / expression / empty
+  feature / compoundExpression / empty
 
 empty = _ { return { type: "EmptyProgram" }  }
 
@@ -12,17 +12,22 @@ featureDescriptor =
         { return { event } }
 
 featureBody
-  = expression|1.., commandDelimeter|
+  = compoundExpression|1.., commandDelimeter|
+
+compoundExpression = first:expression next:(whitespace _ "then" whitespace _ expression)? {
+                   return next ? { type: "CompoundExpression", first, next: next[5] } : first
+}
 
 expression =
+           // All the things that start with identifiers ("call", "next", "log")
+           // must come before identifier expression
            selfReferenceExpression /
            setExpression /
            styleAttrExpression /
            functionCallExpression /
            nextExpression /
            logExpression /
-           // All the things that start with identifiers ("call", "next", "log")
-           // must come before identifier expression
+           waitExpression /
            identifierExpression /
            stringExpression /
            // Anything with a number first must come before numbers
@@ -42,6 +47,9 @@ setExpression = "set" whitespace _ target:styleAttrExpression whitespace _ "to" 
 styleAttrExpression = "*" attr:jsIdentifier target:(whitespace _ "of" whitespace _ expression)?
                { return { type: "StyleAttrExpression", attr, target: target && target[5] } }
 
+waitExpression = "wait" duration:(whitespace _ durationExpression)?
+                { return { type: "WaitExpression", duration: duration && duration[2] } }
+durationExpression = millisecondsDurationExpression / secondsDurationExpression
 millisecondsDurationExpression = value:numberExpression _ "ms" { return { type: "MillisecondsDurationExpression", value } }
 secondsDurationExpression = value:numberExpression _ "s" { return { type: "SecondsDurationExpression", value } }
 numberExpression = [0-9]+ ("." [0-9]+)? { return { type: "NumberExpression", value: text() } }

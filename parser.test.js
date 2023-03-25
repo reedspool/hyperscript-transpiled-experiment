@@ -10,9 +10,6 @@ given("a test suite", () => {
 given("a parser", () => {
     then('it provides a parse function',
          () => assert.strictEqual(typeof Parser.parse, 'function'))
-    then('it can parse a log expression without text',
-         () => assert.deepEqual(Parser.parse('log'),
-                                { type: "LogExpression", args: [] }))
     then('it can parse a self reference `me`',
          () => assert.deepEqual(Parser.parse('me'),
                                 { type: "SelfReferenceExpression" }))
@@ -43,9 +40,18 @@ given("a parser", () => {
     then('it can parse a milliseconds duration expression',
          () => assert.deepEqual(Parser.parse('1000ms'),
                                 { type: "MillisecondsDurationExpression", value: { type: "NumberExpression", value: '1000' }}))
+    then('it can parse a wait expression',
+         () => assert.deepEqual(Parser.parse('wait 1000ms'),
+                                { type: "WaitExpression", duration: { type: "MillisecondsDurationExpression", value: { type: "NumberExpression", value: '1000' }}}))
+    then('it can parse a log expression without text',
+         () => assert.deepEqual(Parser.parse('log'),
+                                { type: "LogExpression", args: [] }))
     then('it can parse a log command with text',
          () => assert.deepEqual(Parser.parse('log "hello"'),
                                 { type: "LogExpression", args: [{ type: "StringExpression", value: 'hello' }] }))
+    then('it can parse two log commands concatenated with `then`',
+         () => assert.deepEqual(Parser.parse('log "hello" then log "hola"'),
+                                { type: "CompoundExpression", first: { type: "LogExpression", args: [{ type: "StringExpression", value: 'hello' }] }, next: { type: "LogExpression", args: [{ type: "StringExpression", value: 'hola' }] }  }))
     then('it can parse a single-line on-click feature ',
          () => assert.deepEqual(Parser.parse('on click log "hello"'),
                                 { type: "Feature", event: "click", body: [{ type: "LogExpression", args: [{ type: "StringExpression", value: 'hello' }] }] }))

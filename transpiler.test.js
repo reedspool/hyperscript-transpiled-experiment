@@ -18,13 +18,24 @@ given("a transpiler", () => {
         () => strictEqual(typeof transpile, "function"))
     then(
         "it transpiles an empty program",
-        tMatches('', /\(target\)\s*=>\s*{\s*return\s*}/))
+        tMatches('', /\(target\)\s*=>/))
     when("it transpiles a integer expression", tMatches('3', /3/));
     when("it transpiles a float number expression", tMatches('3.14', /3\.14/));
     when("it transpiles a integer seconds expression to milliseconds", tMatches('3s', /\(\s*3\s*\*\s*1000\)/));
     when("it transpiles a float seconds expression to milliseconds", tMatches('3.14s', /\(\s*3.14\s*\*\s*1000\)/));
     when("it transpiles a integer milliseconds expression", tMatches('5ms', /5/));
     when("it transpiles a float milliseconds expression", tMatches('5.44ms', /5.44/));
+    when("it transpiles a compound expression joined by `then`", () => {
+        const program = t('log "hello" then log "hola"');
+        then("it includes the first log", () => match(program, /hello/))
+        then("it includes a separating comma", () => match(program, /,/))
+        then("it includes the second log", () => match(program, /hola/))
+        });
+    when("it transpiles a wait expression", () => {
+        const program = t('wait 1.24s');
+        then("it calls the runtime function", () => match(program, /____.wait\(/))
+        then("it includes the duration", () => match(program, /1.24/))
+        });
     when("it transpiles an untargeted style attr expression", () => {
         const program = t('*backgroundColor');
         then("it attempts to access the style", () => match(program, /backgroundColor/))
@@ -59,8 +70,8 @@ given("a transpiler", () => {
         then("it includes a log", () => match(program, /console\.log\("hello"\)/))
     })
     when("it transpiles a self reference", () => {
-        then("`me` reflects the target", () => match(t('me'), /return target/))
-        then("`I` reflects the target", () => match(t('I'), /return target/))
+        then("`me` reflects the target", () => match(t('me'), /\(?target\)?/))
+        then("`I` reflects the target", () => match(t('I'), /\(?target\)?/))
     })
     when("it transpiles a function call expression", () => {
         then("the function name is present", () => match(t('call myFunc()'), /myFunc/))

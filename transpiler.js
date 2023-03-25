@@ -1,6 +1,8 @@
 export const transpile = (tree) =>
     {
-        return `(target) => { return ${transpileContents(tree)} }`;
+        let contents = transpileContents(tree);
+        if (contents.match(/^\s*$/)) contents = "/* noop */undefined";
+        return `async (target) => (${contents})`;
     }
 
 export const transpileContents = (tree) =>
@@ -14,12 +16,14 @@ export const transpileContents = (tree) =>
 // Which is also the same structure as tested in parser.test.js
 export const typesToTranspileFns = {
     "EmptyProgram" : () => '',
-    "Feature": (tree) => `target.addEventListener('${tree.event}', () => { ${typesToTranspileFns["CommandList"](tree.body)} })`,
+    "Feature": (tree) => `target.addEventListener('${tree.event}', async () => (${typesToTranspileFns["CommandList"](tree.body)}))`,
+    "CompoundExpression": ({ first, next }) => `(await ${transpileContents(first)}),${transpileContents(next)}`,
     "StyleAttrExpression": ({ attr, target }) => `${target ? transpileContents(target) : 'target'}.style.${attr}`,
     "SetExpression": ({ attr, target, value }) => `${transpileContents(target)} = ${transpileContents(value)}`,
     "NumberExpression": ({ value }) => `${value}`,
     "SecondsDurationExpression": ({ value }) => `(${transpileContents(value)} * 1000)`,
     "MillisecondsDurationExpression": ({ value }) => `${transpileContents(value)}`,
+    "WaitExpression": ({ duration }) => `____.wait(${transpileContents(duration)})`,
     "NextExpression": ({ selector }) => `____.next(target, document.body, ${transpileContents(selector)}, false)`,
     "LogExpression": ({ args }) => `console.log(${args.length > 0 ? args.map(transpileContents).join(", ") : ""})`,
     "CommandList": (array) => array.map(transpileContents).join(';'),
