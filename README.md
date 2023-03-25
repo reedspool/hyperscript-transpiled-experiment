@@ -73,3 +73,31 @@ flowchart LR
     test-->runtimeReport
 ```
 
+## Strategy
+
+My general strategy for adding new features is to start with wishful thinking:
+
+1. write some code which I wish worked in `index.html`
+1. see that it doesn't work yet
+1. write a failing test in `parser.test.js`,
+1. make it pass.
+1. commit
+1. write a failing test in `transpiler.test.js`,
+1. make it pass
+1. ammend my commit
+1. write a failing test in `runtime.test.js`,
+1. make it pass
+1. ammend my commit
+1. make what I wrote in `index.html` work
+1. ensure all the tests still pass
+1. ammend my commit  
+
+## Decisions
+
+1. Environment must provide a global object, `____`, which has these functions:
+   1. `wait(milliseconds)` returns a promise that resolves after the given number of milliseconds 
+   1. `next(start, root, selectorString)` finds the next element after `start` matching the selector under the `root` element
+
+`runtime.install(global)` ensures the `____` exists on the given `global`. You probably want to pass `window`.
+
+`runtime.run(source, element)` runs the hyperscript-ish `source` string on the `element`.

@@ -41,9 +41,14 @@ logExpression = "log" arg:(whitespace _ expression)?
 nextExpression = "next" whitespace _ selector:stringExpression
                { return { type: "NextExpression", selector } }
 
-setExpression = "set" whitespace _ target:styleAttrExpression whitespace _ "to" whitespace _ value:expression {
+setExpression = "set" whitespace _ target:settableExpression whitespace _ "to" whitespace _ value:expression {
               return { type: "SetExpression", target, value }
 }
+
+settableExpression =
+                   styleAttrExpression /
+                   identifierExpression
+
 styleAttrExpression = "*" attr:jsIdentifier target:(whitespace _ "of" whitespace _ expression)?
                { return { type: "StyleAttrExpression", attr, target: target && target[5] } }
 

@@ -31,6 +31,11 @@ given("a parser", () => {
             expect: { type: "StyleAttrExpression", attr: 'color', target: { type: "IdentifierExpression", value: "abcd" } }
         },
         {
+            then: 'it can parse setting a variable to a string',
+            src: 'set myColor to "blue"',
+            expect: { type: "SetExpression", target: { type: "IdentifierExpression", value: "myColor"}, value: { type: "StringExpression", value: "blue" }}
+        },
+        {
             then: 'it can parse setting an untargeted style attr expression to a string',
             src: 'set *color to "blue"',
             expect: { type: "SetExpression", target: { type: "StyleAttrExpression", attr: 'color', target: null }, value: { type: "StringExpression", value: "blue" }}

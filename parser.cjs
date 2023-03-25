@@ -727,7 +727,7 @@ function peg$parse(input, options) {
       s2 = peg$parsewhitespace();
       if (s2 !== peg$FAILED) {
         s3 = peg$parse_();
-        s4 = peg$parsestyleAttrExpression();
+        s4 = peg$parsesettableExpression();
         if (s4 !== peg$FAILED) {
           s5 = peg$parsewhitespace();
           if (s5 !== peg$FAILED) {
@@ -774,6 +774,17 @@ function peg$parse(input, options) {
     } else {
       peg$currPos = s0;
       s0 = peg$FAILED;
+    }
+
+    return s0;
+  }
+
+  function peg$parsesettableExpression() {
+    var s0;
+
+    s0 = peg$parsestyleAttrExpression();
+    if (s0 === peg$FAILED) {
+      s0 = peg$parseidentifierExpression();
     }
 
     return s0;
