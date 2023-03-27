@@ -22,7 +22,10 @@
 
          const targets = document.querySelectorAll('[_]')
          Array.prototype.forEach.call(targets, (target) => {
-             exec(target.getAttribute('_'), target)
+             const source = target.getAttribute('_');
+             const transpiled = transpile(Parser.parse(source));
+             target.setAttribute('transpiled', transpiled)
+             run(transpiled, target)
          })
         </script>
 
@@ -48,7 +51,7 @@
         <p>Status: <span id="js-status">Loading...</span>
 
         <script type="module">
-           exec('log "hello world"') // if this doesn't throw...
+           exec('log "Transpiler executing..."') // if this doesn't throw...
            document.querySelector("#js-status").innerHTML = "Running."
         </script>
 
@@ -82,6 +85,13 @@
         <p>How about the same thing, but all hyperscript?</p>
 
         <div><button _='on click set *color of next "[target]" to "red"'>Click to turn the next thing red</button></div>
+
+        <div target>I'll turn red</div>
+
+        <p>How about the same thing, but multi-line hyperscript?</p>
+
+        <div><button _='on click
+                          set *color of next "[target]" to "red"'>Click to turn the next thing red</button></div>
 
         <div target>I'll turn red</div>
 

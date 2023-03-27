@@ -104,7 +104,25 @@ test("runtime", async (t) => {
         await t.test("it calls the given function", () => strictEqual(consoleLog.callCount, 1));
         restore();
     })
-    await t.test('it runs an on-click feature', async (t) => {
+    await t.test('it runs a one-line on-click feature', async (t) => {
+        const consoleLog = fake();
+        replace(console, "log", consoleLog);
+        const addEventListener = fake();
+        const target = { addEventListener };
+        const output = await run(t7e('on click log "hello"'), target)
+        await t.test("it returns undefined", () => strictEqual(output, undefined));
+        await t.test("it calls addEventListener", () => strictEqual(addEventListener.callCount, 1));
+        await t.test("it calls addEventListener on target", () => ok(addEventListener.calledOn(target)));
+        const [ _, listener ] = addEventListener.args[0]
+        strictEqual(typeof listener, "function")
+        await t.test("it doesn't call console.log until listener fired", () => {
+            strictEqual(consoleLog.callCount, 0)
+            listener();
+            strictEqual(consoleLog.callCount, 1)
+            restore();
+        });
+    })
+    await t.test('it runs a multi-line on-click feature', async (t) => {
         const consoleLog = fake();
         replace(console, "log", consoleLog);
         const addEventListener = fake();

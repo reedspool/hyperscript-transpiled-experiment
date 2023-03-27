@@ -70,7 +70,12 @@ given("a transpiler", () => {
     then(
         "it transpiles a log command with text",
         tMatches('log "hello"', /console\.log\("hello"\)/))
-    when("it transpiles an on-click feature", () => {
+    when("it transpiles a single-line on-click feature", () => {
+        const program = t('on click log "hello"');
+        then("it adds an event", () => match(program, /target\.addEventListener/))
+        then("it includes a log", () => match(program, /console\.log\("hello"\)/))
+    })
+    when("it transpiles a multi-line on-click feature", () => {
         const program = t('on click\nlog "hello"');
         then("it adds an event", () => match(program, /target\.addEventListener/))
         then("it includes a log", () => match(program, /console\.log\("hello"\)/))
