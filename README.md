@@ -1,5 +1,7 @@
 # Hyperscript but it's transpiled experiment 
 
+NOTE: This project is defunct. I wanted to continue this experiment using TypeScript, so I made a [new project here](https://github.com/reedspool/hyperscript-transpiled).
+
 Rewriting hyperscript (hyperscript.org) from scratch and seeing if I can do it transpiled. This is mostly to learn about language design, not with any near hope of surpassing what hyperscript does.
 
 ## HTML
