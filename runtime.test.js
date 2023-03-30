@@ -1,4 +1,4 @@
-import { match, strictEqual, ok, deepEqual } from 'node:assert';
+import { match, strictEqual, ok, deepEqual, fail } from 'node:assert';
 import { describe, it, test } from 'node:test';
 import sinon, { fake, replace, restore, useFakeTimers } from "sinon"
 import * as Parser from './parser.cjs';
@@ -10,17 +10,33 @@ const when = wrap('When ')(it);
 const then = wrap('Then ')(it);
 const t7e = (program) => transpile(Parser.parse(program))
 
+// T is an attempt (doesn't always work) at a wrapper for `node:test`'s test()
+// method which includes the offending transpiled code when there is test failure.
+// This is presuming that all test failures raise exceptions, which doesn't seem
+// to be the case.
+const T = async (t, title, source, target, callback) =>
+    t.test(title, async (t) => {
+        let transpiled
+        try {
+            transpiled = transpile(Parser.parse(source));
+            await callback(t, await run(transpiled, target))
+        } catch (error) {
+            fail(`Failure!\n\nTranspiled: ${transpiled}\n\nError: ${error}`)
+        }
+    })
+
+
 test("runtime", async (t) => {
-    await t.test('it runs an empty program', () => run(t7e('')))
+    await T(t, 'it runs an empty program', '', null, () => {})
     await t.test('it runs a number expression', async (t) => {
-        await t.test("it returns a JS value for an integer", async () => strictEqual(await run(t7e('3')), 3));
-        await t.test("it returns a JS value for a float", async () => strictEqual(await run(t7e('3.14')), 3.14));
+        await T(t, "it returns a JS value for an integer", '3', null, async (t, result) => strictEqual(result, 3));
+        await T(t, "it returns a JS value for a float", '3.14', null, async (t, result) => strictEqual(result, 3.14));
     })
     await t.test('it runs a duration expression', async (t) => {
-        await t.test("it returns an integer second value * 1000", async () => strictEqual(await run(t7e('3s')), 3000));
-        await t.test("it returns an float second value * 1000", async () => strictEqual(await run(t7e('3.14s')), 3140));
-        await t.test("it returns an integer millisecond value", async () => strictEqual(await run(t7e('3ms')), 3));
-        await t.test("it returns an float millisecond value", async () => strictEqual(await run(t7e('3.14ms')), 3.14));
+        await T(t, "it returns an integer second value * 1000", '3s', null, async (t, result) => strictEqual(result, 3000));
+        await T(t, "it returns an float second value * 1000", '3.14s', null, async (t, result) => strictEqual(result, 3140));
+        await T(t, "it returns an integer millisecond value", '3ms', null, async (t, result) => strictEqual(result, 3));
+        await T(t, "it returns an float millisecond value", '3.14ms', null, async (t, result) => strictEqual(result, 3.14));
     })
     await t.test('it runs a wait expression', async (t) => {
         const consoleLog = fake();
@@ -41,13 +57,12 @@ test("runtime", async (t) => {
     })
     await t.test('it runs a self reference expression', async (t) => {
         const target = {};
-        await t.test("`me` returns target", async () => strictEqual(await run(t7e('me'), target), target));
-        await t.test("`I` returns target", async () => strictEqual(await run(t7e('I'), target), target));
+        await T(t, "`me` returns target", 'me', target, async (t, result) => strictEqual(result, target));
+        await T(t, "`I` returns target", 'I', target, async (t, result) => strictEqual(result, target));
     })
     await t.test('it runs an untargeted style attr expression', async (t) => {
         const target = { style: { backgroundColor : "tomato" } };
-        const output = await run(t7e('*backgroundColor'), target)
-        await t.test("it returns a JS value", () => strictEqual(output, "tomato"));
+        await T(t, "it returns a JS value", '*backgroundColor', target,  (t, result) => strictEqual(result, "tomato"));
     })
     await t.test('it runs a targeted style attr expression', async (t) => {
         const next = { style: { fontSize : 3.14 } }
